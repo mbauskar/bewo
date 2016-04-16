@@ -358,7 +358,7 @@
    "bold": 0, 
    "collapsible": 0, 
    "fieldname": "request_url", 
-   "fieldtype": "Data", 
+   "fieldtype": "Small Text", 
    "hidden": 0, 
    "ignore_user_permissions": 0, 
    "ignore_xss_filter": 0, 
@@ -513,9 +513,9 @@
  "issingle": 0, 
  "istable": 0, 
  "max_attachments": 0, 
- "modified": "2016-04-15 20:10:49.880440", 
+ "modified": "2016-04-16 12:51:53.980251", 
  "modified_by": "Administrator", 
- "module": "BeWo", 
+ "module": "BEWO", 
  "name": "API Log", 
  "name_case": "", 
  "owner": "Administrator", 
@@ -541,7 +541,6 @@
    "write": 0
   }
  ], 
- "quick_entry": 0, 
  "read_only": 0, 
  "read_only_onload": 0, 
  "sort_field": "modified", 
