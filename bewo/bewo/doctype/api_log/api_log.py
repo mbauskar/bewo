@@ -9,7 +9,7 @@ from frappe.model.document import Document
 import json
 from datetime import datetime
 from frappe.model.naming import make_autoname
-from frappe.utils import get_datetime, format_datetime, nowdate, nowtime
+from frappe.utils import get_datetime, format_datetime, nowdate, nowtime, to_timedelta
 
 class APILog(Document):
 	""" Create and update API Log """
@@ -40,13 +40,14 @@ def log_request(request, form_dict):
 def log_response(docname, response=None):
 	""" update the response for the request """
 
+	res = json.loads(response)
 	log = frappe.get_doc("API Log", docname)
 
 	log.response_time = nowtime()
 	log.response_date = nowdate()
-	res = json.loads(response)
 	log.request_status = "Success" if res.get("code") == 200 else "Failed"
 	log.response = json.dumps(res, indent=2)
+	log.execution_time = "{0}".format(to_timedelta(log.response_time) - log.request_time)
 
 	log.save(ignore_permissions=True)
 	frappe.db.commit()

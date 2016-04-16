@@ -2,27 +2,31 @@ import frappe
 
 def validate_sales_record(sales_order, is_sales_return=False):
 	""" validate product, product stock, bill number """
+
+	def append_errors(result, res):
+		errors = result.get("errors") or []
+		if not errors:
+			errors = [res.get("error")]
+		else:
+			errors.extend(res.get("error"))
+		return errors
+
 	result = { "is_valid": True }
 	bill_no = sales_order.get("strBillNumber")
 	invoice = ""
 
 	res = validate_bill_number(bill_no, is_sales_return=is_sales_return)
 	if not res.get("is_valid"):
-		result.update({ "is_valid": False, "errors": [res.get("error")] })
-	else:
-		result.update(res)
+		result.update({ "is_valid": False, "errors": append_errors(result, res) })
 
 	res = validate_products(sales_order.get("products"), bill_no=bill_no, is_sales_return=is_sales_return)
 	if not res.get("is_valid"):
-		errors = result.get(bill_no) or []
-		if not errors:
-			errors = res.get("error")
-		else:
-			errors.extend(res.get("error"))
-		
-		result.update({ "is_valid": False, "errors": errors })
+		result.update({ "is_valid": False, "errors": append_errors(result, res) })
 
 	return result
+
+def validate_fiscal_year(date):
+	pass
 
 def validate_bill_number(bill_no, is_sales_return=False):
 	""" check if with same bill no already one invoice is available """
