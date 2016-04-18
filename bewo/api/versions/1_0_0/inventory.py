@@ -32,8 +32,14 @@ def get_inventory_records(item_code=None, device=None, fields=None, filters=None
 		filters = [["Item", "item_code", "=", item_code]]
 		item = frappe.get_list("Item", fields=fields, filters=filters)
 		item[0].pop("variant_of")
-		prices = frappe.db.get_values("Item", { "variant_of":item_code }, "mrp")
-		item[0].update({ "dblMRP": [price[0] for price in prices] })
+		modified_date = item[0].pop("modified")
+		prices = [get_item_prices(item[0])]
+		item_prices = frappe.db.get_values("Item", 
+			{ "variant_of":item_code },
+			["mrp", "retail_rate", "wholesale_rate", "purchase_rate"]
+		)
+		
+		item[0].update({ "dblMRP": [",".join(map(str, price)) for price in item_prices] if item_prices else prices })
 		return { "inventory":item }
 	else:
 		prices = {}
@@ -95,7 +101,7 @@ def get_inventory_records(item_code=None, device=None, fields=None, filters=None
 
 				item.update({ "dblMRP": prices.get(item.get("strProductCode")) })
 
-			# if device: update_till_item_download_date(device, max(modified))
+			if device: update_till_item_download_date(device, max(modified))
 			items.extend(template_items)
 
 			return {"inventory": items}
