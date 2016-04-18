@@ -7,6 +7,7 @@ import frappe
 from frappe.model.document import Document
 
 from frappe.utils import get_datetime
+from dateutil.relativedelta import relativedelta
 
 class Till(Document):
 	def before_insert(self):
@@ -14,7 +15,9 @@ class Till(Document):
 
 		item_modified_date = frappe.db.get_all("Item", fields="min(modified) as modified")
 		if item_modified_date and item_modified_date[0]:
-			self.item_sync_date = item_modified_date[0].get("modified")
+			item_sync_date = item_modified_date[0].get("modified") + relativedelta(minutes=-1)
+			# self.item_sync_date = item_modified_date[0].get("modified")
+			self.item_sync_date = item_sync_date
 		else:
 			self.item_sync_date = get_datetime("1990-07-24 16:00:00")
 
@@ -24,6 +27,7 @@ def update_till_item_download_date(till, date):
 
 	till = frappe.get_doc("Till", till)
 
+	# till.item_sync_date = get_datetime(date) + relativedelta(minutes=-1)
 	till.item_sync_date = date
 	till.last_download_sync = get_datetime()
 
