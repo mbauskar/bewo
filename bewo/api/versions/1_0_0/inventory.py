@@ -15,7 +15,7 @@ def get_inventory_records(item_code=None, device=None, fields=None, filters=None
 		"ifnull(wholesale_rate, 0) as dblSellingPrice_Wholesale",
 		"ifnull(purchase_rate, 0) as dblPurchasePrice",
 		"ifnull(inventory_maintained_by, '') as type",
-		"case disabled when 0 then 'Active' else 'Deactive' end as staus",
+		"case disabled when 0 then 'Active' else 'Deactive' end as status",
 		"'%s' as strCompany"%(frappe.db.get_default("company")),
 		"variant_of",
 		"modified"
